@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Date Invite :)</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+    color: #2d2340;
+
+    background:
+        radial-gradient(circle at 20% 20%, #ffd6e8 0, transparent 35%),
+        radial-gradient(circle at 80% 25%, #d9c7ff 0, transparent 35%),
+        radial-gradient(circle at 50% 85%, #c7f4ff 0, transparent 35%),
+        linear-gradient(135deg, #fff0f7, #eee8ff, #e6faff);
+
+    background-size: 200% 200%;
+    animation: backgroundMove 10s ease infinite;
+}
+
+@keyframes backgroundMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* floating background objects */
+
+.float {
+    position: fixed;
+    pointer-events: none;
+    opacity: .45;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(110vh) rotate(0deg);
+    }
+    to {
+        transform: translateY(-20vh) rotate(360deg);
+    }
+}
+
+/* page container */
+
+.page {
+    min-height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+}
+
+.page.active {
+    display: flex;
+    animation: pageIn .55s ease;
+}
+
+@keyframes pageIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* card */
+
+.card {
+    width: min(520px, 100%);
+    background: rgba(255,255,255,.78);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 30px;
+    padding: 38px 28px;
+    text-align: center;
+
+    box-shadow:
+        0 25px 60px rgba(73, 43, 110, .16),
+        inset 0 1px 0 white;
+}
+
+.bigEmoji {
+    font-size: 65px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+h1 {
+    font-size: clamp(30px, 7vw, 46px);
+    margin: 12px 0;
+}
+
+h2 {
+    font-size: 29px;
+    margin-bottom: 8px;
+}
+
+p {
+    color: #6e6280;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.small {
+    font-size: 13px;
+    opacity: .7;
+}
+
+/* buttons */
+
+.buttons {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    min-height: 60px;
+    position: relative;
+}
+
+button {
+    border: 0;
+    border-radius: 18px;
+    padding: 15px 25px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:active {
+    transform: scale(.95);
+}
+
+.primary {
+    color: white;
+    background: linear-gradient(135deg,#ff6fa8,#9a78ff);
+    box-shadow: 0 10px 25px rgba(154,120,255,.28);
+}
+
+.primary:hover {
+    transform: translateY(-3px) scale(1.03);
+}
+
+.secondary {
+    background: #eeeaf5;
+    color: #6e6280;
+}
+
+#noBtn {
+    position: relative;
+}
+
+/* choices */
+
+.choiceGrid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.choice {
+    background: white;
+    border: 2px solid transparent;
+    box-shadow: 0 7px 18px rgba(70,40,100,.08);
+}
+
+.choice:hover {
+    border-color: #c3a9ff;
+    transform: translateY(-2px);
+}
+
+.choice.selected {
+    color: white;
+    background: linear-gradient(135deg,#ff79ad,#9875ff);
+}
+
+/* time grid */
+
+.timeGrid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 11px;
+    margin-top: 22px;
+}
+
+/* confirmation */
+
+.confirmation {
+    background: rgba(255,255,255,.75);
+    border-radius: 20px;
+    padding: 18px;
+    margin: 25px 0;
+    font-size: 18px;
+}
+
+.check {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 42px;
+
+    background: linear-gradient(135deg,#ff6fa8,#9875ff);
+
+    animation: pop .6s cubic-bezier(.2,1.5,.5,1);
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* confetti */
+
+.confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    border-radius: 3px;
+    z-index: 1000;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+    }
+}
+
+/* phone */
+
+@media(max-width:500px) {
+
+    .card {
+        padding: 32px 20px;
+        border-radius: 25px;
+    }
+
+    .choiceGrid,
+    .timeGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+
+<section class="page active" id="page1">
+
+<div class="card">
+
+<div class="bigEmoji">👀</div>
+
+<h1>Okay sooo...</h1>
+
+<p>
+I have a very important question for you.
+</p>
+
+<h2>Will you go on a date with me? :)</h2>
+
+<div class="buttons">
+
+<button class="primary" onclick="saidYes()">
+Yes :)
+</button>
+
+<button
+class="secondary"
+id="noBtn"
+onmouseover="runAway()"
+ontouchstart="runAway()">
+No
+</button>
+
+</div>
+
+<p class="small" id="noMessage">
+Choose wisely...
+</p>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 2 -->
+
+<section class="page" id="page2">
+
+<div class="card">
+
+<div class="bigEmoji">😳</div>
+
+<h1>WAIT.</h1>
+
+<h2>You actually said yes??</h2>
+
+<p>
+Okay okay... I definitely had this all planned out.
+</p>
+
+<p>
+Totally wasn't nervous or anything.
+</p>
+
+<button class="primary" onclick="showPage(3)">
+Continue :)
+</button>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 3 — DAY -->
+
+<section class="page" id="page3">
+
+<div class="card">
+
+<div class="bigEmoji">📅</div>
+
+<h2>When are you free?</h2>
+
+<p>
+Pick a day that works for you.
+I'll handle the actual date :)
+</p>
+
+<div class="choiceGrid">
+
+<button class="choice"
+onclick="chooseDay(this,'Friday')">
+Friday
+</button>
+
+<button class="choice"
+onclick="chooseDay(this,'Saturday')">
+Saturday
+</button>
+
+<button class="choice"
+onclick="chooseDay(this,'Monday')">
+Monday
+</button>
+
+<button class="choice"
+onclick="chooseDay(this,'Tuesday')">
+Tuesday
+</button>
+
+</div>
+
+<br>
+
+<button
+class="primary"
+id="dayContinue"
+style="display:none"
+onclick="showPage(4)">
+Next →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 4 — TIME -->
+
+<section class="page" id="page4">
+
+<div class="card">
+
+<div class="bigEmoji">⏰</div>
+
+<h2>What time works?</h2>
+
+<p id="chosenDayText">
+Perfect.
+</p>
+
+<div class="timeGrid">
+
+<button class="choice"
+onclick="chooseTime(this,'5:30 PM')">
+5:30 PM
+</button>
+
+<button class="choice"
+onclick="chooseTime(this,'6:00 PM')">
+6:00 PM
+</button>
+
+<button class="choice"
+onclick="chooseTime(this,'6:30 PM')">
+6:30 PM
+</button>
+
+<button class="choice"
+onclick="chooseTime(this,'7:00 PM')">
+7:00 PM
+</button>
+
+<button class="choice"
+onclick="chooseTime(this,'7:30 PM')">
+7:30 PM
+</button>
+
+<button class="choice"
+onclick="chooseTime(this,'8:00 PM')">
+8:00 PM
+</button>
+
+</div>
+
+<br>
+
+<button
+class="primary"
+id="timeContinue"
+style="display:none"
+onclick="finish()">
+Lock it in :)
+</button>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 5 -->
+
+<section class="page" id="page5">
+
+<div class="card">
+
+<div class="check">✓</div>
+
+<h1>IT'S A DATE :)</h1>
+
+<p>
+Excellent choice.
+</p>
+
+<div class="confirmation">
+
+<strong id="finalDay"></strong>
+
+<br><br>
+
+<span id="finalTime"></span>
+
+</div>
+
+<p>
+I'll take care of the rest.
+</p>
+
+<h2>See you then :)</h2>
+
+<p class="small">
+— Spencer
+</p>
+
+</div>
+
+</section>
+
+
+<script>
+
+let selectedDay = "";
+let selectedTime = "";
+let noAttempts = 0;
+
+
+/* page switching */
+
+function showPage(number) {
+
+    document.querySelectorAll(".page")
+        .forEach(page =>
+            page.classList.remove("active")
+        );
+
+    document
+        .getElementById("page" + number)
+        .classList.add("active");
+
+    window.scrollTo(0,0);
+}
+
+
+/* YES */
+
+function saidYes() {
+
+    confetti();
+
+    setTimeout(() => {
+        showPage(2);
+    }, 500);
+}
+
+
+/* NO BUTTON */
+
+function runAway() {
+
+    const button =
+        document.getElementById("noBtn");
+
+    const message =
+        document.getElementById("noMessage");
+
+    noAttempts++;
+
+    const messages = [
+        "Hey 🤨",
+        "Wrong button.",
+        "Try that again 😂",
+        "You're making this difficult.",
+        "That button seems broken...",
+        "Just press yes 😭"
+    ];
+
+    message.textContent =
+        messages[
+            Math.min(
+                noAttempts - 1,
+                messages.length - 1
+            )
+        ];
+
+    button.style.position = "fixed";
+
+    const maxX =
+        window.innerWidth -
+        button.offsetWidth - 20;
+
+    const maxY =
+        window.innerHeight -
+        button.offsetHeight - 20;
+
+    button.style.left =
+        Math.max(
+            10,
+            Math.random() * maxX
+        ) + "px";
+
+    button.style.top =
+        Math.max(
+            10,
+            Math.random() * maxY
+        ) + "px";
+}
+
+
+/* DAY */
+
+function chooseDay(button,day) {
+
+    selectedDay = day;
+
+    document
+        .querySelectorAll("#page3 .choice")
+        .forEach(b =>
+            b.classList.remove("selected")
+        );
+
+    button.classList.add("selected");
+
+    document
+        .getElementById("dayContinue")
+        .style.display = "inline-block";
+}
+
+
+/* TIME */
+
+function chooseTime(button,time) {
+
+    selectedTime = time;
+
+    document
+        .querySelectorAll("#page4 .choice")
+        .forEach(b =>
+            b.classList.remove("selected")
+        );
+
+    button.classList.add("selected");
+
+    document
+        .getElementById("timeContinue")
+        .style.display = "inline-block";
+
+    document
+        .getElementById("chosenDayText")
+        .textContent =
+        selectedDay + " works :) Now pick a time.";
+}
+
+
+/* FINISH */
+
+function finish() {
+
+    document
+        .getElementById("finalDay")
+        .textContent = selectedDay;
+
+    document
+        .getElementById("finalTime")
+        .textContent = selectedTime;
+
+    showPage(5);
+
+    confetti();
+}
+
+
+/* CONFETTI */
+
+function confetti() {
+
+    const colors = [
+        "#ff6fa8",
+        "#9875ff",
+        "#70dfff",
+        "#ffd166",
+        "#7ee6a8"
+    ];
+
+    for(let i = 0; i < 80; i++) {
+
+        const piece =
+            document.createElement("div");
+
+        piece.className = "confetti";
+
+        piece.style.left =
+            Math.random() * 100 + "vw";
+
+        piece.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+        piece.style.animationDelay =
+            Math.random() * .8 + "s";
+
+        piece.style.transform =
+            "rotate(" +
+            Math.random() * 360 +
+            "deg)";
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+            piece.remove();
+        },4000);
+    }
+}
+
+
+/* FLOATING BACKGROUND */
+
+const floatSymbols =
+    [":)", "✦", "♡", "★", "✧"];
+
+for(let i = 0; i < 18; i++) {
+
+    const thing =
+        document.createElement("div");
+
+    thing.className = "float";
+
+    thing.textContent =
+        floatSymbols[
+            Math.floor(
+                Math.random() *
+                floatSymbols.length
+            )
+        ];
+
+    thing.style.left =
+        Math.random() * 100 + "vw";
+
+    thing.style.fontSize =
+        (15 + Math.random() * 25) + "px";
+
+    thing.style.animationDuration =
+        (8 + Math.random() * 10) + "s";
+
+    thing.style.animationDelay =
+        (-Math.random() * 15) + "s";
+
+    document.body.appendChild(thing);
+}
+
+</script>
+
+</body>
+</html>
