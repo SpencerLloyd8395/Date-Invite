@@ -580,20 +580,18 @@ function runAway() {
             )
         ];
 
-    const card = button.closest(".card");
+    button.style.position = "fixed";
 
-button.style.position = "absolute";
+const padding = 30;
 
-const cardRect = card.getBoundingClientRect();
+const maxX = window.innerWidth - button.offsetWidth - padding;
+const maxY = window.innerHeight - button.offsetHeight - padding;
 
-const maxX = card.clientWidth - button.offsetWidth - 20;
-const maxY = card.clientHeight - button.offsetHeight - 20;
+const x = padding + Math.random() * Math.max(0, maxX - padding);
+const y = padding + Math.random() * Math.max(0, maxY - padding);
 
-button.style.left =
-    Math.max(20, Math.random() * maxX) + "px";
-
-button.style.top =
-    Math.max(20, Math.random() * maxY) + "px";
+button.style.left = x + "px";
+button.style.top = y + "px";
 }
 
 
