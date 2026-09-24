@@ -81,6 +81,7 @@ body {
 /* card */
 
 .card {
+    position: relative;
     width: min(520px, 100%);
     background: rgba(255,255,255,.78);
     backdrop-filter: blur(18px);
@@ -579,27 +580,20 @@ function runAway() {
             )
         ];
 
-    button.style.position = "fixed";
+    const card = button.closest(".card");
 
-    const maxX =
-        window.innerWidth -
-        button.offsetWidth - 100;
+button.style.position = "absolute";
 
-    const maxY =
-        window.innerHeight -
-        button.offsetHeight - 100;
+const cardRect = card.getBoundingClientRect();
 
-    button.style.left =
-        Math.max(
-            10,
-            Math.random() * maxX
-        ) + "px";
+const maxX = card.clientWidth - button.offsetWidth - 20;
+const maxY = card.clientHeight - button.offsetHeight - 20;
 
-    button.style.top =
-        Math.max(
-            10,
-            Math.random() * maxY
-        ) + "px";
+button.style.left =
+    Math.max(20, Math.random() * maxX) + "px";
+
+button.style.top =
+    Math.max(20, Math.random() * maxY) + "px";
 }
 
 
